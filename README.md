@@ -38,13 +38,5 @@ Dataset is imbalanced (no resampling/weighting applied yet).
 
 Model Deployment:
 Folder Structure:
-produce_classifier/
-├── flask_api/
-│   ├── app.py                # Flask backend
-│   └── model.h5              # Trained ResNet50 model
-├── streamlit_app/
-│   └── app.py                # Streamlit frontend
-├── requirements.txt          # Combined requirements
-├── README.md                 # Project overview
-└── runtime.txt (optional for Render)
+![Folder Structure](image.png)
 Deployment on Render (Free Tier)
