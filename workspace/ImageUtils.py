@@ -1,4 +1,5 @@
 from MyImports import *
+
 def examine_dataset(folder_path):
     """
     Examines an image dataset organized by class folders.

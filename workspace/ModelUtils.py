@@ -4,32 +4,63 @@ from MyImports import *
 image_size = (256, 256)
 
 import tensorflow as tf
-import numpy as np
-from PIL import Image
 
-def preprocess_uploaded_image(uploaded_file, target_size=(224, 224), normalize=True):
+def prepare_image_for_model(uploaded_file, target_size):
     """
-    Preprocesses an uploaded image file for model prediction.
+    Prepares an uploaded image file for model prediction.
 
     Parameters:
-        uploaded_file: A file-like object (e.g., from st.file_uploader)
-        target_size (tuple): Size to resize image to (width, height).
-        normalize (bool): If True, scales pixel values to [0, 1].
+        uploaded_file: File-like object (e.g., from Streamlit's st.file_uploader)
+        target_size (tuple): Desired image size (width, height)
+        normalize (bool): Whether to normalize pixel values to [0, 1]
 
     Returns:
-        np.ndarray: Preprocessed image with shape (1, H, W, C)
+        tf.Tensor: Image tensor of shape (1, H, W, C), ready for model.predict()
     """
-    # Load image using PIL
-    img = Image.open(uploaded_file).convert("RGB")
-    img = img.resize(target_size)
+    # Load image
+    img = tf.keras.utils.load_img(uploaded_file)
 
-    # Convert to numpy array
+    # Convert to float32 NumPy array
     img_array = tf.keras.utils.img_to_array(img)
 
-    if normalize:
-        img_array = img_array / 255.0
+    # Optional: Normalize pixel values   
+    img_array = img_array / 255.0
 
-    # Add batch dimension
-    img_array = np.expand_dims(img_array, axis=0)
+    # Resize image
+    img_resized = tf.image.resize(img_array, target_size)
 
-    return img_array
+    # Add batch dimension: (H, W, C) -> (1, H, W, C)
+    img_batch = tf.expand_dims(img_resized, axis=0)
+
+    return img_batch
+
+
+# index           0        1        2         3
+class_names = ['noise', 'onion', 'potato', 'tomato']
+
+def predict_image_class(model, image_tensor):
+    """
+    Predict the class of an input image using a trained model.
+
+    Parameters:
+        model (tf.keras.Model): Trained Keras model.
+        image_tensor (tf.Tensor): Image tensor of shape (1, H, W, C), preprocessed.
+        class_names (list): List of class names (index must match model output indices).
+
+    Returns:
+        tuple: (predicted_class_name, confidence_score)
+    """
+    # Predict probabilities
+    predictions = model.predict(image_tensor)
+    
+    # Get index of highest probability
+    pred_index = tf.argmax(predictions[0]).numpy()
+
+    # Get class name and confidence
+    predicted_class = class_names[pred_index]
+    confidence = predictions[0][pred_index]
+
+    return predicted_class, float(confidence)
+
+
+
