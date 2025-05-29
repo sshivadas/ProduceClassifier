@@ -37,6 +37,4 @@ Challenges & Considerations:
 Dataset is imbalanced (no resampling/weighting applied yet).
 
 Model Deployment:
-Folder Structure:
-![Folder Structure](image.png)
 Deployment on Render (Free Tier)
