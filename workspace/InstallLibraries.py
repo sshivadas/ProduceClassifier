@@ -21,6 +21,7 @@ packages_to_install = [
     "scikit-learn",
     "tensorflow",
     "streamlit",
+    "Pillow"
 ]
 
 # For import checking, use the correct import names here
@@ -28,6 +29,7 @@ import_names = [
     "sklearn",      # for scikit-learn
     "tensorflow",
     "streamlit",
+    "PIL"
 ]
 
 # Run installation check

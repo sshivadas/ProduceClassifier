@@ -1,5 +1,5 @@
 from MyImports import *
-import matplotlib.pyplot as plt
+
 
 def plot_accuracy(model_history, n_epochs=None):
     """

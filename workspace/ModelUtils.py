@@ -1,66 +1,77 @@
 from MyImports import *
 
-# Specifying the image size to resize all images
-image_size = (256, 256)
-
-import tensorflow as tf
-
-def prepare_image_for_model(uploaded_file, target_size):
+def process_image(image_path):
     """
-    Prepares an uploaded image file for model prediction.
+    Prepares an image for model prediction.
 
     Parameters:
-        uploaded_file: File-like object (e.g., from Streamlit's st.file_uploader)
-        target_size (tuple): Desired image size (width, height)
-        normalize (bool): Whether to normalize pixel values to [0, 1]
-
+        image_path (str): Path to the image file.
+        
     Returns:
         tf.Tensor: Image tensor of shape (1, H, W, C), ready for model.predict()
     """
-    # Load image
-    img = tf.keras.utils.load_img(uploaded_file)
-
+    #Load Image
+    image= tf.keras.utils.load_img(image_path)
+    
     # Convert to float32 NumPy array
-    img_array = tf.keras.utils.img_to_array(img)
-
-    # Optional: Normalize pixel values   
-    img_array = img_array / 255.0
+    img_array = tf.keras.utils.img_to_array(image)
 
     # Resize image
-    img_resized = tf.image.resize(img_array, target_size)
+    img_resized = tf.image.resize(img_array, image_size)
 
     # Add batch dimension: (H, W, C) -> (1, H, W, C)
-    img_batch = tf.expand_dims(img_resized, axis=0)
+    img_tensor = tf.expand_dims(img_resized, axis=0)
 
-    return img_batch
+    return img_tensor
 
-
-# index           0        1        2         3
-class_names = ['noise', 'onion', 'potato', 'tomato']
-
-def predict_image_class(model, image_tensor):
+def predict_image_class(model, image_tensor, class_names):
     """
     Predict the class of an input image using a trained model.
 
     Parameters:
         model (tf.keras.Model): Trained Keras model.
         image_tensor (tf.Tensor): Image tensor of shape (1, H, W, C), preprocessed.
-        class_names (list): List of class names (index must match model output indices).
+        
 
     Returns:
-        tuple: (predicted_class_name, confidence_score)
+        predicted_label (str): Predicted class label.
     """
-    # Predict probabilities
-    predictions = model.predict(image_tensor)
-    
-    # Get index of highest probability
-    pred_index = tf.argmax(predictions[0]).numpy()
+    pred = model.predict(image_tensor, verbose=0)
+    predicted_index = tf.argmax(pred, 1).numpy().item()
+    predicted_label = class_names[predicted_index]
+    return predicted_label
 
-    # Get class name and confidence
-    predicted_class = class_names[pred_index]
-    confidence = predictions[0][pred_index]
+def classwise_accuracy(folder_path, model,class_names):
+    """
+    Compute and print per-class classification accuracy using a given model.
 
-    return predicted_class, float(confidence)
+    Args:
+        folder_path (Path): Path object pointing to the root folder containing class-wise subfolders.
+        model: A model with a `.predict()` method that returns (pred_class, confidence).
 
+    Prints:
+        Accuracy percentage and number of images per class.
+    """
+    for class_folder in sorted(folder_path.iterdir()):
+        if not class_folder.is_dir():
+            continue
+
+        cls_name = class_folder.name
+        image_paths = list(class_folder.glob('*'))
+
+        if not image_paths:
+            print(f"⚠️  Skipping empty class: {cls_name}")
+            continue
+
+        correct_predictions = 0
+
+        for img_path in image_paths:
+            img_tensor = process_image(img_path)
+            pred_class = predict_image_class(model, img_tensor,class_names)
+            if pred_class == cls_name:
+                correct_predictions += 1
+
+        accuracy = (correct_predictions / len(image_paths)) * 100
+        print(f"✅ Accuracy for class '{cls_name}': {accuracy:.2f}% ({len(image_paths)} images)")
 
 

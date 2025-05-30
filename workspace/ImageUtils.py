@@ -48,7 +48,7 @@ def visualize_sample_image(image_dict):
 
     Parameters:
         image_dict (dict): A dictionary where keys are class names and 
-                           values are PIL.Image objects representing one sample image per class.
+                           values is one sample image per class.
     """
     num_classes = len(image_dict)
     if num_classes == 0:
