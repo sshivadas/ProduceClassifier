@@ -1,9 +1,11 @@
 # ProduceClassifier
 This project builds a computer vision model to classify three common vegetables — onion, potato, and tomato — and distinguish them from background noise such as Indian market scenes. The aim is to assist in automatically recognizing vegetable items from photos, which can be useful for applications like automated checkout systems or inventory management.
+
 Dataset:-
 This dataset contains images of the following food items: 
 1. Vegetables- onion, potato and tomato
 2. Noise-Indian market
+3. 
 The images in this dataset were scraped from Google.
 https://drive.google.com/file/d/1clZX-lV_MLxKHSyeyTheX5OCQtNCUcqT/view?usp=sharing
 
@@ -12,6 +14,7 @@ This dataset contains a folder train, which has a total of 3135 images, split in
 •	Potato : 898
 •	Onion : 849
 •	Indian market : 599
+
 This dataset contains another folder test which has a total of 351 images, split into four folders
 •	Tomato : 106
 •	potato : 83
