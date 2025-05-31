@@ -114,8 +114,6 @@ def plot_accuracy(model_history, n_epochs=None):
     plt.show()
 
 
-
-
 def plot_loss(model_history, n_epochs=None):
     """
     Plots training and validation loss over epochs.

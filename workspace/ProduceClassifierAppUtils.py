@@ -4,7 +4,7 @@ from ModelTrainingUtils import predict_image_class
 
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model("CNN.keras")
+    model = tf.keras.models.load_model("ProduceClassifier.keras")
     return model
 
 def process_streamlit_input_image(image_file):
