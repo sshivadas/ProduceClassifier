@@ -1,5 +1,12 @@
 from MyImports import *
-from ModelUtils import predict_image_class
+from ModelTrainingUtils import predict_image_class
+
+
+@st.cache_resource
+def load_model():
+    model = tf.keras.models.load_model("CNN.keras")
+    return model
+
 def process_streamlit_input_image(image_file):
     """
     Prepares an image file for model prediction.
@@ -11,13 +18,10 @@ def process_streamlit_input_image(image_file):
         tf.Tensor: Image tensor of shape (1, H, W, C), ready for model.predict()
     """
     # Open image using PIL and ensure RGB format
-    image = Image.open(image_file).convert('RGB')
+    #image = Image.open(image_file)
 
     # Convert to float32 NumPy array
-    img_array = tf.keras.utils.img_to_array(image)
-
-    # Optional: Normalize pixel values   
-    img_array = img_array / 255.0
+    img_array = tf.keras.utils.img_to_array(image_file)
 
     # Resize image
     img_resized = tf.image.resize(img_array, image_size)
